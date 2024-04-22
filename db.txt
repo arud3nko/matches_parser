@@ -1,0 +1,16 @@
+CREATE DATABASE IF NOT EXISTS football_matches;
+
+USE football_matches;
+
+CREATE TABLE Matches (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    date TEXT NOT NULL,
+    league TEXT NOT NULL,
+    team1_name TEXT NOT NULL,
+    team2_name TEXT NOT NULL,
+    match_time TEXT NOT NULL,
+    match_url TEXT NOT NULL,
+    match_score TEXT,
+    team1_goals TEXT,
+    team2_goals TEXT
+);

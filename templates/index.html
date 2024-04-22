@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Matches</title>
+        <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        form {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form p {
+            margin: 10px 0;
+        }
+
+        label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        input[type="number"] {
+            width: 60px;
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 8px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .status-box {
+            padding: 10px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .running {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        .stopped {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ccc;
+        }
+
+        th {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    {% if parser_running %}
+        <div class="status-box running">Парсер запущен...</div>
+    {% else %}
+        <div class="status-box stopped">Парсер остановлен</div>
+    {% endif %}
+    <form method="POST">
+        {% if parser_running %}
+        {% else %}
+            <div>
+                <label for="date">Введите отклонение от сегодняшней даты:</label>
+                <input type="number" id="date" name="date" min="-7" max="7" required>
+                <button type="submit" name="action" value="start">Запуск</button>
+            </div>
+            <p>
+                Отклонение от сегодняшней даты - число от -7 до 7. Например: нужна дата Сегодня => 0, Вчера => -1, Завтра => 1.
+            </p>
+        {% endif %}
+    </form>
+    <form method="POST">
+        {% if parser_running %}
+            <button type="submit" name="action" value="stop">Остановить</button>
+        {% endif %}
+    </form>
+    <table>
+        <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Лига</th>
+                <th>Команда 1</th>
+                <th>Команда 2</th>
+                <th>Время матча</th>
+                <th>Ссылка (id) матча</th>
+                <th>Счет</th>
+                <th>РГ к. 1</th>
+                <th>РГ к. 2</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for match in matches %}
+                <tr>
+                    <td>{{ match.date }}</td>
+                    <td>{{ match.league }}</td>
+                    <td>{{ match.team1_name }}</td>
+                    <td>{{ match.team2_name }}</td>
+                    <td>{{ match.match_time }}</td>
+                    <td>{{ match.match_url }}</td>
+                    <td>{{ match.match_score }}</td>
+                    <td>{{ match.team1_goals }}</td>
+                    <td>{{ match.team2_goals }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <script>
+        var intervalId;
+
+        function updateTable() {
+            fetch(window.location.href, { method: 'GET' })
+                .then(response => response.text())
+                .then(html => {
+                    document.open();
+                    document.write(html);
+                    document.close();
+                })
+                .catch(error => console.error('Error updating table:', error));
+        }
+
+        {% if parser_running %}
+            if (typeof intervalId == 'undefined') {
+                intervalId = setInterval(updateTable, 2000);
+            }
+        {% else %}
+             if (typeof intervalId !== 'undefined') {
+                clearInterval(intervalId);
+            }
+        {% endif %}
+    </script>
+</body>
+</html>
