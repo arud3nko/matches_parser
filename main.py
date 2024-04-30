@@ -13,11 +13,11 @@ def main(date: int):
     db = DatabaseHandler('mysql+mysqlconnector://root:root@localhost:3306/football_matches')
 
     match_info_parser = MatchInfoParser(
-        url="https://local-ruua.flashscore.ninja/46/x/feed/",
+        url="",
         client=client)
 
     matches_parser = MatchParser(
-        url="https://m.flashscorekz.com/",
+        url="",
         client=client,
         match_info_parser=match_info_parser
     )
@@ -42,4 +42,4 @@ def dataclass_to_db_model(match: MatchInfo, date: int) -> Match:
 
 
 if __name__ == '__main__':
-    main()
+    main(0)

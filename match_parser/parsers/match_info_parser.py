@@ -30,7 +30,6 @@ class MatchInfoParser(BaseMatchInfoParser):
         try:
             info = self._fetch_api(base_url=base_url, match_url=match.url)
         except ValueError:
-            print("ERROR")
             return "0:0", "0:0"
 
         return self._find_goal_ratio(match.teams[0], match.teams[1], info)
